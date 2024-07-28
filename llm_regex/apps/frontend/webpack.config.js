@@ -5,7 +5,6 @@ module.exports = {
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "./static/frontend"),
-    clean: true,
   },
   module: {
     rules: [
@@ -15,6 +14,10 @@ module.exports = {
         use: {
           loader: "babel-loader",
         },
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
       },
     ],
   },
