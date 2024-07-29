@@ -6,26 +6,21 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 
-// Register the plugins
 registerPlugin(
   FilePondPluginImageExifOrientation,
   FilePondPluginImagePreview,
   FilePondPluginFileValidateType
 );
 
-export default function FormUploadImage() {
+export default function FormFile() {
   const [files, setFiles] = useState([]);
-  const acceptedFileTypes = [
-    "text/csv",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "application/vnd.ms-excel",
-  ];
   const fileValidateTypeLabelExpectedTypesMap = {
     "text/csv": "CSV",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
       "Excel",
     "application/vnd.ms-excel": "Excel",
   };
+  const acceptedFileTypes = Object.keys(fileValidateTypeLabelExpectedTypesMap);
 
   return (
     <div className="card py-2 h-100">
@@ -38,21 +33,14 @@ export default function FormUploadImage() {
                 files={files}
                 onupdatefiles={setFiles}
                 allowMultiple={false}
-                // server="/api"
-                name="files" /* sets the file input name, it's filepond by default */
+                server="/api/file/"
+                name="file"
                 labelIdle='Drag & Drop your file or <span class="filepond--label-action">Browse</span>'
                 acceptedFileTypes={acceptedFileTypes}
                 fileValidateTypeLabelExpectedTypesMap={
                   fileValidateTypeLabelExpectedTypesMap
                 }
               />
-              {/* <input
-                className="form-control"
-                type="file"
-                id="image"
-                name="image"
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              /> */}
               <small id="imageHelp" className="form-text text-muted">
                 Allowed file types: .csv, .xls, .xlsx
               </small>

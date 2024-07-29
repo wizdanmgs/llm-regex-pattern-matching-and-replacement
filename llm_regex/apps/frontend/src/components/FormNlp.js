@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function FormInput() {
+export default function FormNlp() {
   return (
     <div className="card py-2 h-100">
       <div className="card-body">

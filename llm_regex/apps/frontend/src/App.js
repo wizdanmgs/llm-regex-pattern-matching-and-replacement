@@ -1,8 +1,8 @@
 import React from "react";
 
-import Header from "./components/Header";
-import FormUploadImage from "./components/FormUploadImage";
-import FormInput from "./components/FormInput";
+import Title from "./components/Title";
+import FormFileUpload from "./components/FormFileUpload";
+import FormNlp from "./components/FormNlp";
 import PreviewTable from "./components/PreviewTable";
 
 export default function App() {
@@ -12,12 +12,12 @@ export default function App() {
         <div className="row">
           <div className="col-12 col-md-5">
             <div className="row">
-              <Header />
+              <Title />
               <div className="col-12 mb-2">
-                <FormUploadImage />
+                <FormFileUpload />
               </div>
               <div className="col-12 mb-2">
-                <FormInput />
+                <FormNlp />
               </div>
             </div>
           </div>
