@@ -129,3 +129,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+### React ###
+node_modules
+llm_regex/apps/frontend/static/frontend

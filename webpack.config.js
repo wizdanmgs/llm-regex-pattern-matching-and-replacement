@@ -1,10 +1,10 @@
 const path = require("path");
 
 module.exports = {
-  entry: path.resolve(__dirname, "./src/index.js"),
+  entry: path.resolve(__dirname, "./llm_regex/apps/frontend/src/index.js"),
   output: {
     filename: "main.js",
-    path: path.resolve(__dirname, "./static/frontend"),
+    path: path.resolve(__dirname, "./llm_regex/apps/frontend/static/frontend"),
   },
   module: {
     rules: [
