@@ -14,6 +14,8 @@ registerPlugin(
 
 export default function FormFile() {
   const [files, setFiles] = useState([]);
+  const [serverId, setServerId] = useState("");
+
   const fileValidateTypeLabelExpectedTypesMap = {
     "text/csv": "CSV",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
@@ -21,6 +23,14 @@ export default function FormFile() {
     "application/vnd.ms-excel": "Excel",
   };
   const acceptedFileTypes = Object.keys(fileValidateTypeLabelExpectedTypesMap);
+  const server = {
+    process: "/api/file/",
+    revert: `/api/file/${serverId}`,
+  };
+
+  const handleOnProcessFile = (file) => {
+    setServerId(JSON.parse(file.serverId).id);
+  };
 
   return (
     <div className="card py-2 h-100">
@@ -32,8 +42,9 @@ export default function FormFile() {
               <FilePond
                 files={files}
                 onupdatefiles={setFiles}
+                onprocessfile={(_, file) => handleOnProcessFile(file)}
                 allowMultiple={false}
-                server="/api/file/"
+                server={server}
                 name="file"
                 labelIdle='Drag & Drop your file or <span class="filepond--label-action">Browse</span>'
                 acceptedFileTypes={acceptedFileTypes}
