@@ -133,3 +133,6 @@ cython_debug/
 ### React ###
 node_modules
 llm_regex/apps/frontend/static/frontend
+
+### Api Test ###
+api-test.http
