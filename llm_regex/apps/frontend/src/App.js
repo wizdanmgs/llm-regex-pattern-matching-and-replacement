@@ -8,17 +8,21 @@ import PreviewTable from "./components/PreviewTable";
 export default function App() {
   return (
     <>
-      <Header />
-      <div className="main">
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-md-5">
-              <FormUploadImage />
-              <FormInput />
+      <div className="container">
+        <div className="row">
+          <div className="col-12 col-md-5">
+            <div className="row">
+              <Header />
+              <div className="col-12 mb-2">
+                <FormUploadImage />
+              </div>
+              <div className="col-12 mb-2">
+                <FormInput />
+              </div>
             </div>
-            <div className="col-md-7">
-              <PreviewTable />
-            </div>
+          </div>
+          <div className="col-12 col-md-7 mb-4">
+            <PreviewTable />
           </div>
         </div>
       </div>

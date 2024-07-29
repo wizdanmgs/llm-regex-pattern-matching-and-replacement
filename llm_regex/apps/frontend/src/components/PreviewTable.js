@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
 export default function PreviewTable() {
-  const data = [
+  const [rowData, setRowData] = useState([
     {
       Index: 1,
       "Customer Id": "DD37Cf93aecA6Dc",
@@ -1402,35 +1405,75 @@ export default function PreviewTable() {
       "Subscription Date": "2020-03-11",
       Website: "http://www.hatfield-saunders.net/",
     },
-  ];
+  ]);
 
-  const heads = Object.keys(data[0]);
+  const [colDefs, setColDefs] = useState(
+    Object.keys(rowData[0]).map((head) => {
+      return {
+        field: head,
+      };
+    })
+  );
+
+  const [simpleRowData, setSimpleRowData] = useState([
+    {
+      "Customer Id": "DD37Cf93aecA6Dc",
+      "First Name": "Sheryl",
+      "Last Name": "Baxter",
+    },
+    {
+      "Customer Id": "1Ef7b82A4CAAD10",
+      "First Name": "Preston",
+      "Last Name": "Lozano",
+    },
+    {
+      "Customer Id": "6F94879bDAfE5a6",
+      "First Name": "Roy",
+      "Last Name": "Berry",
+    },
+  ]);
+
+  const [simpleColDefs, setSimpleColDefs] = useState(
+    Object.keys(simpleRowData[0]).map((head) => {
+      return {
+        field: head,
+      };
+    })
+  );
+
+  const pagination = true;
+  const paginationPageSize = 10;
+  const paginationPageSizeSelector = false;
 
   return (
-    <div className="card h-100">
+    <div className="card py-2 h-100">
       <div className="card-body">
         <legend>Preview</legend>
-        <div className="table-responsive">
-          <table className="table table-hover">
-            <thead>
-              <tr>
-                {heads.map((head, i) => (
-                  <th scope="col" key={i}>
-                    {head}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, i) => (
-                <tr className="table-light" key={i}>
-                  {Object.values(row).map((value, i) => (
-                    <td key={i}>{value}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="ag-theme-quartz" style={{ height: "562px" }}>
+          <AgGridReact
+            rowData={simpleRowData}
+            columnDefs={simpleColDefs}
+            pagination={pagination}
+            paginationPageSize={paginationPageSize}
+            paginationPageSizeSelector={paginationPageSizeSelector}
+          />
+        </div>
+        <div className="mt-3">
+          {/* <button
+            className="btn btn-secondary float-start"
+            style={{ width: "49.2%" }}
+          >
+            <i className="fas fa-chevron-left"></i> Back
+          </button>
+          <button
+            className="btn btn-success float-end"
+            style={{ width: "49.2%" }}
+          >
+            <i className="fas fa-arrow-down"></i> Download
+          </button> */}
+          <button className="btn btn-success float-end w-100">
+            Download Result <i className="fas fa-download"></i>
+          </button>
         </div>
       </div>
     </div>
