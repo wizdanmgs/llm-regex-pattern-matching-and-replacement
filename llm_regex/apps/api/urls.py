@@ -1,4 +1,6 @@
 from django.urls import path
-from . import views
+from .views import UploadedFileView
 
-urlpatterns = []
+urlpatterns = [
+    path("api/file/", UploadedFileView.as_view(), name="file"),
+]
