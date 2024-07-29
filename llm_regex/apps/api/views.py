@@ -1,21 +1,20 @@
-from rest_framework import status
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.response import Response
-from rest_framework.views import APIView
+import os
 
+from django.conf import settings
+from rest_framework import viewsets
+from .models import UploadedFile
 from .serializers import UploadedFileSerializer
 
 
-class UploadedFileView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+class UploadedFileViewSet(viewsets.ModelViewSet):
+    queryset = UploadedFile.objects.all()
     serializer_class = UploadedFileSerializer
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            # you can access the file like this from serializer
-            # uploaded_file = serializer.validated_data["file"]
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save()
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def perform_destroy(self, serializer):
+        file_path = os.path.join(settings.MEDIA_ROOT, serializer.file.name)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        serializer.delete()
