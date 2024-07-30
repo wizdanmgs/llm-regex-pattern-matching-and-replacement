@@ -1,18 +1,17 @@
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setPreviewRecords, setPreviewLoading } from "../../state/previewSlice";
+
 import { FilePond, registerPlugin } from "react-filepond";
-import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import "filepond/dist/filepond.min.css";
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 
-registerPlugin(
-  FilePondPluginImageExifOrientation,
-  FilePondPluginImagePreview,
-  FilePondPluginFileValidateType
-);
+registerPlugin(FilePondPluginFileValidateType);
 
 export default function FormFile() {
+  const dispatch = useDispatch();
+
   const [files, setFiles] = useState([]);
   const [serverId, setServerId] = useState("");
 
@@ -28,9 +27,24 @@ export default function FormFile() {
     revert: `/api/file/${serverId}`,
   };
 
+  const handleOnAddFile = (error, file) => {
+    if (!error) {
+      dispatch(setPreviewLoading(true));
+    }
+  };
+
+  const handleOnRemoveFile = (error, _) => {
+    if (!error) {
+      dispatch(setPreviewRecords([]));
+    }
+  };
+
   const handleOnProcessFile = (error, file) => {
     if (!error) {
-      setServerId(JSON.parse(file.serverId).id);
+      const serverId = JSON.parse(file.serverId);
+      setServerId(serverId.data.id);
+      dispatch(setPreviewRecords(JSON.parse(serverId.table)));
+      dispatch(setPreviewLoading(false));
     }
   };
 
@@ -47,6 +61,8 @@ export default function FormFile() {
                 onprocessfile={(error, file) =>
                   handleOnProcessFile(error, file)
                 }
+                onaddfile={(error, file) => handleOnAddFile(error, file)}
+                onremovefile={(error, file) => handleOnRemoveFile(error, file)}
                 allowMultiple={false}
                 server={server}
                 name="file"
