@@ -1,9 +1,7 @@
-import React from "react";
-
-import { useDispatch, useSelector } from "react-redux";
-import { setFileId } from "../../state/fileSlice";
+import React, { useState } from "react";
+import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
 import { setPreviewRecords, setPreviewLoading } from "../../state/previewSlice";
-
 import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import "filepond/dist/filepond.min.css";
@@ -12,6 +10,7 @@ registerPlugin(FilePondPluginFileValidateType);
 
 export default function FormFile() {
   const dispatch = useDispatch();
+  const [fileId, setFileId] = useState("");
 
   // Filepond config
   const fileValidateTypeLabelExpectedTypesMap = {
@@ -22,8 +21,11 @@ export default function FormFile() {
   };
   const acceptedFileTypes = Object.keys(fileValidateTypeLabelExpectedTypesMap);
   const server = {
+    headers: {
+      "X-CSRFToken": Cookies.get("csrftoken"),
+    },
     process: "/api/file/",
-    revert: `/api/file/${useSelector((state) => state.file.id)}/`,
+    revert: `/api/file/${fileId}/`,
   };
 
   const handleOnAddFile = (error, file) => {
@@ -41,8 +43,8 @@ export default function FormFile() {
   const handleOnProcessFile = (error, file) => {
     if (!error) {
       const serverId = JSON.parse(file.serverId);
-      dispatch(setFileId(serverId.data.id));
-      dispatch(setPreviewRecords(JSON.parse(serverId.table)));
+      setFileId(serverId.data.serializer.id);
+      dispatch(setPreviewRecords(JSON.parse(serverId.data.table)));
       dispatch(setPreviewLoading(false));
     }
   };
