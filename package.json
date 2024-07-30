@@ -19,6 +19,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.2.7",
     "ag-grid-react": "^32.0.2",
     "css-loader": "^7.1.2",
     "filepond": "^4.31.1",
