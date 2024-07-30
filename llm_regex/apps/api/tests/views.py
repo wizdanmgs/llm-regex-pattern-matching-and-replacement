@@ -1,3 +1,6 @@
+import pandas as pd
+import io
+
 from django.test import TestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -55,14 +58,20 @@ class UploadedFileViewTest(TestCase):
             None
         """
         content = {"name": "test_file.xls", "type": "application/vnd.ms-excel"}
+        df = pd.DataFrame()
+        output_stream = io.BytesIO()
+        df.to_excel(output_stream, index=False)
+
         file = SimpleUploadedFile(
-            content["name"], b"file_content", content_type=content["type"]
+            content["name"], output_stream.getvalue(), content_type=content["type"]
         )
         response = self.client.post("/api/file/", {"file": file})
 
         self.assertEqual(UploadedFile.objects.count(), 1)
         self.assertEqual(FileSystemStorage().exists(content["name"]), True)
         self.assertEqual(response.status_code, 201)
+
+        print(response)
 
         FileSystemStorage().delete(content["name"])
 
@@ -87,8 +96,13 @@ class UploadedFileViewTest(TestCase):
             "name": "test_file.xlsx",
             "type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         }
+
+        df = pd.DataFrame()
+        output_stream = io.BytesIO()
+        df.to_excel(output_stream, index=False)
+
         file = SimpleUploadedFile(
-            content["name"], b"file_content", content_type=content["type"]
+            content["name"], output_stream.getvalue(), content_type=content["type"]
         )
         response = self.client.post("/api/file/", {"file": file})
 
