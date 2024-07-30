@@ -1,7 +1,11 @@
+import pandas as pd
+
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+from rest_framework import status
 
 from .models import UploadedFile
 from .serializers import UploadedFileSerializer
@@ -11,31 +15,67 @@ class UploadedFileViewSet(ModelViewSet):
     queryset = UploadedFile.objects.all()
     serializer_class = UploadedFileSerializer
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         """
-        Perform the creation of a new object using the given serializer.
+        Create a new instance of the `UploadedFile` model based on the provided data.
 
         Args:
-            serializer (Serializer): The serializer instance containing the data for the new object.
-
-        Raises:
-            ValidationError: If the content type of the file in the serializer data is not allowed.
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
-            None
+            Response: The HTTP response containing the serialized data and the table in JSON format if the file is valid,
+                      or the serializer errors if the file is not valid.
+
+        Raises:
+            None.
+
+        Notes:
+            - The function first checks if the provided data is valid by using the serializer.
+            - If the data is valid, it retrieves the file from the serializer's validated data.
+            - It then checks if the file's content type is one of the allowed content types. If not, it returns a 400
+              Bad Request response with an error message.
+            - If the file's content type is "text/csv", it reads the file using `pd.read_csv()`. Otherwise, it reads the
+              file using `pd.read_excel()` with the "openpyxl" engine.
+            - It then converts the DataFrame to JSON format with the "records" orientation.
+            - Finally, it saves the serializer and returns a 201 Created response with the serialized data and the table
+              in JSON format.
+
         """
+        serializer = self.serializer_class(data=request.data)
+
         allowed_content_types = [
             "text/csv",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             "application/vnd.ms-excel",
         ]
 
-        if serializer.validated_data["file"].content_type not in allowed_content_types:
-            raise ValidationError(
-                {"message": "Unsupported file type. Please upload a CSV or Excel file."}
+        if serializer.is_valid():
+            file = serializer.validated_data["file"]
+            if file.content_type not in allowed_content_types:
+                return Response(
+                    {
+                        "message": "Unsupported file type. Please upload a CSV or Excel file."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if file.content_type == "text/csv":
+                df = pd.read_csv(file)
+            else:
+                df = pd.read_excel(file, engine="openpyxl")
+
+            json_data = df.to_json(orient="records")
+
+            serializer.save()
+
+            return Response(
+                {"data": serializer.data, "table": json_data},
+                status=status.HTTP_201_CREATED,
             )
 
-        serializer.save()
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_destroy(self, serializer):
         """
