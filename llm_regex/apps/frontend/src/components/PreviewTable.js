@@ -26,7 +26,7 @@ export default function PreviewTable() {
     <div className="card py-2 h-100">
       <div className="card-body">
         <legend>Preview</legend>
-        <div className="ag-theme-quartz" style={{ height: "562px" }}>
+        <div className="ag-theme-quartz" style={{ height: "563px" }}>
           <AgGridReact
             rowData={records}
             columnDefs={column}
