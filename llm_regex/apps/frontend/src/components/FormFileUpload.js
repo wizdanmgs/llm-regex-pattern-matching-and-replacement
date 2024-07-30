@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setFileId } from "../../state/fileSlice";
 import { setPreviewRecords, setPreviewLoading } from "../../state/previewSlice";
 
 import { FilePond, registerPlugin } from "react-filepond";
@@ -12,9 +13,7 @@ registerPlugin(FilePondPluginFileValidateType);
 export default function FormFile() {
   const dispatch = useDispatch();
 
-  const [files, setFiles] = useState([]);
-  const [serverId, setServerId] = useState("");
-
+  // Filepond config
   const fileValidateTypeLabelExpectedTypesMap = {
     "text/csv": "CSV",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
@@ -24,7 +23,7 @@ export default function FormFile() {
   const acceptedFileTypes = Object.keys(fileValidateTypeLabelExpectedTypesMap);
   const server = {
     process: "/api/file/",
-    revert: `/api/file/${serverId}`,
+    revert: `/api/file/${useSelector((state) => state.file.id)}/`,
   };
 
   const handleOnAddFile = (error, file) => {
@@ -42,7 +41,7 @@ export default function FormFile() {
   const handleOnProcessFile = (error, file) => {
     if (!error) {
       const serverId = JSON.parse(file.serverId);
-      setServerId(serverId.data.id);
+      dispatch(setFileId(serverId.data.id));
       dispatch(setPreviewRecords(JSON.parse(serverId.table)));
       dispatch(setPreviewLoading(false));
     }
@@ -56,8 +55,6 @@ export default function FormFile() {
             <legend>1. Upload your file</legend>
             <div className="mt-4">
               <FilePond
-                files={files}
-                onupdatefiles={setFiles}
                 onprocessfile={(error, file) =>
                   handleOnProcessFile(error, file)
                 }
