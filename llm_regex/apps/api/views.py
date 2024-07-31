@@ -7,8 +7,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import UploadedFile
-from .serializers import UploadedFileSerializer
+from .models import UploadedFile, NlpQuery
+from .serializers import UploadedFileSerializer, NlpQuerySerializer
 
 
 class UploadedFileViewSet(ModelViewSet):
@@ -27,9 +27,6 @@ class UploadedFileViewSet(ModelViewSet):
         Returns:
             Response: The HTTP response containing the serialized data and the table in JSON format if the file is valid,
                       or the serializer errors if the file is not valid.
-
-        Raises:
-            None.
 
         Notes:
             - The function first checks if the provided data is valid by using the serializer.
@@ -56,7 +53,9 @@ class UploadedFileViewSet(ModelViewSet):
             if file.content_type not in allowed_content_types:
                 return Response(
                     {
-                        "message": "Unsupported file type. Please upload a CSV or Excel file."
+                        "status": 400,
+                        "message": "Unsupported file type. Please upload a CSV or Excel file.",
+                        "data": None,
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -71,11 +70,22 @@ class UploadedFileViewSet(ModelViewSet):
             serializer.save()
 
             return Response(
-                {"data": serializer.data, "table": json_data},
+                {
+                    "status": 200,
+                    "message": "File uploaded successfully.",
+                    "data": {"serializer": serializer.data, "table": json_data},
+                },
                 status=status.HTTP_201_CREATED,
             )
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "status": 400,
+                "message": "Invalid file. Please upload a CSV or Excel file.",
+                "data": serializer.errors,
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def perform_destroy(self, serializer):
         """
@@ -90,3 +100,12 @@ class UploadedFileViewSet(ModelViewSet):
         if FileSystemStorage().exists(serializer.file.name):
             FileSystemStorage().delete(serializer.file.name)
         serializer.delete()
+
+
+class NlpQueryViewSet(ModelViewSet):
+    queryset = NlpQuery.objects.all()
+    serializer_class = NlpQuerySerializer
+
+    def perform_create(self, serializer):
+        # TODO: connect to LLM and perform NLP query
+        raise ValidationError({"message": "NLP queries cannot be created directly."})
