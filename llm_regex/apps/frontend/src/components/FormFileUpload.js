@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import { setPreviewRecords, setPreviewLoading } from "../../state/previewSlice";
+import {
+  setPreviewRecords,
+  setPreviewLoading,
+  setPreviewSameFile,
+} from "../../state/previewSlice";
 import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import "filepond/dist/filepond.min.css";
@@ -37,6 +41,7 @@ export default function FormFile() {
   const handleOnRemoveFile = (error, _) => {
     if (!error) {
       dispatch(setPreviewRecords([]));
+      dispatch(setPreviewSameFile(false));
     }
   };
 
@@ -72,7 +77,7 @@ export default function FormFile() {
                 }
               />
               <small id="imageHelp" className="form-text text-muted">
-                Allowed file types: .csv, .xls, .xlsx
+                Allowed file types: .csv, .xls, .xlsx (use utf-8 encoding)
               </small>
             </div>
           </fieldset>
