@@ -5,6 +5,7 @@ const previewSlice = createSlice({
   initialState: {
     records: [],
     loading: false,
+    sameFile: false,
   },
   reducers: {
     setPreviewRecords: (state, action) => {
@@ -13,9 +14,14 @@ const previewSlice = createSlice({
     setPreviewLoading: (state, action) => {
       state.loading = action.payload;
     },
+
+    setPreviewSameFile: (state, action) => {
+      state.sameFile = action.payload;
+    },
   },
 });
 
-export const { setPreviewRecords, setPreviewLoading } = previewSlice.actions;
+export const { setPreviewRecords, setPreviewLoading, setPreviewSameFile } =
+  previewSlice.actions;
 
 export default previewSlice.reducer;
