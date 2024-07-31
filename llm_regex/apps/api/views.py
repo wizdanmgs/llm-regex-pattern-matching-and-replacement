@@ -224,7 +224,7 @@ class NlpQueryViewSet(ModelViewSet):
             ]
 
             # Invoke the model with the combined input
-            llm_result = model.invoke(messages)
+            llm_result = llm_model.invoke(llm_messages)
 
             json_llm_result = json.loads(llm_result.content)
             regex = json_llm_result["regex"]
