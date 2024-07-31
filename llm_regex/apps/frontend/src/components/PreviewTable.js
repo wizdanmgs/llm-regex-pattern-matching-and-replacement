@@ -36,21 +36,11 @@ export default function PreviewTable() {
             loading={loading}
           />
         </div>
-        <div className="mt-3">
-          {/* <button
-            className="btn btn-secondary float-start"
-            style={{ width: "49.2%" }}
-          >
-            <i className="fas fa-chevron-left"></i> Back
-          </button>
-          <button
-            className="btn btn-success float-end"
-            style={{ width: "49.2%" }}
-          >
-            <i className="fas fa-arrow-down"></i> Download
-          </button> */}
-          <button className="btn btn-success float-end w-100">
-            Download Result <i className="fas fa-download"></i>
+        <div className="mt-3 d-flex justify-content-between">
+          <button className="btn btn-success">Download as CSV</button>
+          <button className="btn btn-warning ms-2">Download as XML</button>
+          <button className="btn btn-danger ms-2">
+            Download as Plain Text
           </button>
         </div>
       </div>
