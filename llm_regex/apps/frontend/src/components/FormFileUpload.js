@@ -45,8 +45,8 @@ export default function FormFile() {
       const serverId = JSON.parse(file.serverId);
       setFileId(serverId.data.serializer.id);
       dispatch(setPreviewRecords(JSON.parse(serverId.data.table)));
-      dispatch(setPreviewLoading(false));
     }
+    dispatch(setPreviewLoading(false));
   };
 
   return (
