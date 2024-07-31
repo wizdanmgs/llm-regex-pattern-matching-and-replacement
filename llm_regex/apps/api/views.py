@@ -1,7 +1,6 @@
 import pandas as pd
 
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -40,6 +39,7 @@ class UploadedFileViewSet(ModelViewSet):
               in JSON format.
 
         """
+        request.data["mime"] = request.data["file"].content_type
         serializer = self.serializer_class(data=request.data)
 
         allowed_content_types = [
@@ -50,6 +50,7 @@ class UploadedFileViewSet(ModelViewSet):
 
         if serializer.is_valid():
             file = serializer.validated_data["file"]
+
             if file.content_type not in allowed_content_types:
                 return Response(
                     {
@@ -97,8 +98,6 @@ class UploadedFileViewSet(ModelViewSet):
         Returns:
             None
         """
-        if FileSystemStorage().exists(serializer.file.name):
-            FileSystemStorage().delete(serializer.file.name)
         serializer.delete()
 
 
